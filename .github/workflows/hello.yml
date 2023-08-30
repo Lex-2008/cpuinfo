@@ -1,0 +1,15 @@
+name: GitHub Action
+on: [push]
+jobs:
+  hello-world:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out this repo
+        uses: actions/checkout@v3
+      - run: pwd
+      - run: ls -lah
+      - run: cmake .
+      - run: ls -lah
+      - run: cmake --build .
+      - run: ls -lah
+      - run: ./hello_world
