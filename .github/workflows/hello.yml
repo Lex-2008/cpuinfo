@@ -2,7 +2,14 @@ name: GitHub Action
 on: [push]
 jobs:
   hello-world:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Check out this repo
         uses: actions/checkout@v3
@@ -13,3 +20,6 @@ jobs:
       - run: cmake --build .
       - run: ls -lah
       - run: ./hello_world
+        if: "!startsWith(matrix.os, 'windows')"
+      - run: ./Debug/hello_world.exe
+        if: startsWith(matrix.os, 'windows')
