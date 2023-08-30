@@ -1,0 +1,41 @@
+name: Cross build
+on: [push]
+jobs:
+  cross-build:
+    if: false
+    strategy:
+      fail-fast: false
+      matrix:
+        triplet: [ x64-windows, x64-osx, # official, testable
+          x64-mingw-static, x64-osx-release, # community, testable
+          arm64-osx] # community, untestable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out this repo
+        uses: actions/checkout@v3
+
+      - run: sed -i '/CMAKE_SYSTEM_NAME/d;$a set(VCPKG_CMAKE_SYSTEM_NAME Generic)' "$VCPKG_INSTALLATION_ROOT/triplets/community/x64-mingw-static.cmake"
+        if: contains(matrix.triplet, 'mingw')
+
+      - run: vcpkg install cpuid:${{ matrix.triplet }}
+
+      - run: cmake --toolchain "$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} .
+      - run: cmake --build .
+      - run: file cpu-info
+
+  cross-mac:
+    if: false
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        triplet: [ arm64-osx ]
+    steps:
+      - name: Check out this repo
+        uses: actions/checkout@v3
+
+      - run: vcpkg install cpuid:${{ matrix.triplet }} --allow-unsupported
+
+      - run: cmake --toolchain "$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} --log-level=verbose -DVCPKG_VERBOSE=ON .
+      - run: cat CMakeCache.txt
+      - run: cmake --build . -v
+      - run: file cpu-info

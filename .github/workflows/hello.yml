@@ -1,7 +1,7 @@
-name: GitHub Action
+name: Native build
 on: [push]
 jobs:
-  hello-world:
+  native-build:
     strategy:
       fail-fast: false
       matrix:
@@ -13,9 +13,15 @@ jobs:
     steps:
       - name: Check out this repo
         uses: actions/checkout@v3
+
+        # NOTE: Starting with the September 2023 release, the default triplet
+        # for vcpkg libraries on Windows will change from x86-windows to the
+        # detected host triplet (x64-windows). Unttil then, add
+        # '--triplet x64-windows' to keep the desired behavior.
+      - run: vcpkg install cpuid ${{ startsWith(matrix.os, 'windows') && '--triplet x64-windows' || '' }}
       - run: pwd
       - run: ls -lah
-      - run: cmake .
+      - run: cmake . --toolchain "$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
       - run: ls -lah
       - run: cmake --build .
       - run: ls -lah
@@ -23,3 +29,4 @@ jobs:
         if: "!startsWith(matrix.os, 'windows')"
       - run: ./Debug/hello_world.exe
         if: startsWith(matrix.os, 'windows')
+
