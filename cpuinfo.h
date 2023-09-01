@@ -4,9 +4,10 @@ namespace libcpuid {
 
 class cpuinfo {
 	public:
-		int cpuid_present(void);
-		int cpuid_get_raw_data(struct libcpuid::cpu_raw_data_t *data);
-		int cpu_identify(struct libcpuid::cpu_raw_data_t *raw, struct libcpuid::cpu_id_t *data);
+		virtual int cpuid_present(void);
+		virtual int cpuid_get_raw_data(struct libcpuid::cpu_raw_data_t *data);
+		virtual int cpu_identify(struct libcpuid::cpu_raw_data_t *raw, struct libcpuid::cpu_id_t *data);
+		virtual int cpu_clock(void);
 };
 
 int get_cpuinfo(cpuinfo *actor);

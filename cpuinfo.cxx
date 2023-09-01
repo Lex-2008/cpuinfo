@@ -6,19 +6,30 @@ namespace libcpuid {
 
 class cpuinfo {
 	public:
-		int cpuid_present(void){
-			return libcpuid::cpuid_present();
-		}
-		int cpuid_get_raw_data(struct libcpuid::cpu_raw_data_t *data){
-			return libcpuid::cpuid_get_raw_data(data);
-		}
-		int cpu_identify(struct libcpuid::cpu_raw_data_t *raw, struct libcpuid::cpu_id_t *data){
-			return libcpuid::cpu_identify(raw, data);
-		}
-		int cpu_clock(void){
-			return libcpuid::cpu_clock();
-		}
+		virtual int cpuid_present(void);
+		virtual int cpuid_get_raw_data(struct libcpuid::cpu_raw_data_t *data);
+		virtual int cpu_identify(struct libcpuid::cpu_raw_data_t *raw, struct libcpuid::cpu_id_t *data);
+		virtual int cpu_clock(void);
 };
+
+// at least one of virtual methods must be non-inline to link on gcc, https://stackoverflow.com/a/57504289
+// all virtual methods must be non-inline to link on Windows
+
+int cpuinfo::cpuid_present(void){
+	return libcpuid::cpuid_present();
+}
+
+int cpuinfo::cpuid_get_raw_data(struct libcpuid::cpu_raw_data_t *data){
+	return libcpuid::cpuid_get_raw_data(data);
+}
+
+int cpuinfo::cpu_identify(struct libcpuid::cpu_raw_data_t *raw, struct libcpuid::cpu_id_t *data){
+	return libcpuid::cpu_identify(raw, data);
+}
+
+int cpuinfo::cpu_clock(void){
+	return libcpuid::cpu_clock();
+}
 
 int get_cpuinfo(cpuinfo *actor)
 {
