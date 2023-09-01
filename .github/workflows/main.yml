@@ -25,8 +25,8 @@ jobs:
       - run: ls -lah
       - run: cmake --build .
       - run: ls -lah
-      - run: ./cpuinfo
+      - run: ./cpu-info
         if: "!startsWith(matrix.os, 'windows')"
-      - run: ./Debug/cpuinfo.exe
+      - run: ./Debug/cpu-info.exe
         if: startsWith(matrix.os, 'windows')
 

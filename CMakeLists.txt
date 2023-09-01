@@ -3,5 +3,8 @@ project(cpuinfo)
 
 find_package(cpuid CONFIG REQUIRED)
 
-add_executable(cpuinfo cpuinfo.cxx)
-target_link_libraries(cpuinfo PRIVATE cpuid::cpuid)
+add_library(cpuinfo cpuinfo.cxx)
+add_executable(cpu-info main.cxx)
+
+target_link_libraries(cpu-info cpuinfo)
+target_link_libraries(cpuinfo cpuid::cpuid)
