@@ -23,6 +23,13 @@ class test3:public cpuinfo {
 		}
 };
 
+class test4:public cpuinfo {
+	public:
+		virtual int cpu_clock(void){
+			return 1;
+		}
+};
+
 int main()
 {
 	test1 t1;
@@ -36,6 +43,10 @@ int main()
 	test3 t3;
 	assert( get_cpuinfo(&t3) == -3 );
 	std::cout << "Test 3 pass\n";
+
+	test4 t4;
+	assert( get_cpuinfo(&t4) == -4 );
+	std::cout << "Test 4 pass\n";
 
 	std::cout << "All tests pass!\n";
 }

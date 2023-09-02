@@ -55,7 +55,14 @@ int get_cpuinfo(cpuinfo *actor)
 
 	std::cout << "Processor model is: " << data.cpu_codename << "\n";
 	std::cout << "The processor has "<< data.num_cores <<" cores\n";
-	std::cout << "CPU clock is: " << actor->cpu_clock() << " MHz\n";
+
+	int cpu_freq = actor->cpu_clock();
+	if(cpu_freq < 2) {
+		std::cerr << "CPU frequency is bogus, sorry.\n";
+		return -4;
+	}
+
+	std::cout << "CPU clock is: " << cpu_freq << " MHz\n";
 
 	return 0;
 }
