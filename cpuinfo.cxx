@@ -5,6 +5,9 @@ namespace libcpuid {
 }
 
 class cpuinfo {
+	// wrapper class for libcpuid functions. Useful for testing -
+	// descendant classes can override individual methods and see how
+	// your program reacts to various return values. See tests.cxx
 	public:
 		virtual int cpuid_present(void);
 		virtual int cpuid_get_raw_data(struct libcpuid::cpu_raw_data_t *data);
@@ -31,6 +34,9 @@ int cpuinfo::cpu_clock(void){
 	return libcpuid::cpu_clock();
 }
 
+// main function to get information about CPU and print to to stdout. Use it like this:
+// 	cpuinfo actor;
+// 	return get_cpuinfo(&actor);
 int get_cpuinfo(cpuinfo *actor)
 {
 	if (!actor->cpuid_present()) {                                                // check for CPUID presence
