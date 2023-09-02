@@ -10,8 +10,10 @@ jobs:
             artifact-path: cpu-info
           - name: windows-latest
             artifact-path: |
-                Release
-                Debug
+                Release/*.exe
+                Release/*.dll
+                Debug/*.exe
+                Debug/*.dll
           - name: macos-latest
             artifact-path: cpu-info
     runs-on: ${{ matrix.os.name }}
