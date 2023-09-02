@@ -10,4 +10,6 @@ class cpuinfo {
 		virtual int cpu_clock(void);
 };
 
+std::string format_freq(int mhz);
+
 int get_cpuinfo(cpuinfo *actor);

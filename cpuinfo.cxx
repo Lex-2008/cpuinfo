@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fmt/core.h>
 
 namespace libcpuid {
 #include <libcpuid.h>
@@ -29,6 +30,14 @@ int cpuinfo::cpu_identify(struct libcpuid::cpu_raw_data_t *raw, struct libcpuid:
 
 int cpuinfo::cpu_clock(void){
 	return libcpuid::cpu_clock();
+}
+
+std::string format_freq(int mhz){
+	if (mhz < 1000){
+		return fmt::format("{} MHz", mhz);
+	} else {
+		return fmt::format("{:#.3g} GHz", static_cast<float>(mhz)/1000. );
+	}
 }
 
 int get_cpuinfo(cpuinfo *actor)
@@ -62,7 +71,7 @@ int get_cpuinfo(cpuinfo *actor)
 		return -4;
 	}
 
-	std::cout << "CPU clock is: " << cpu_freq << " MHz\n";
+	std::cout << "CPU clock is: " << format_freq(cpu_freq) << "\n";
 
 	return 0;
 }
