@@ -5,8 +5,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+        os:
+          - name: ubuntu-latest
+            artifact-path: cpu-info
+          - name: windows-latest
+            artifact-path: |
+                Release
+                Debug
+          - name: macos-latest
+            artifact-path: cpu-info
+    runs-on: ${{ matrix.os.name }}
     defaults:
       run:
         shell: bash
@@ -28,3 +36,8 @@ jobs:
         # https://gitlab.kitware.com/cmake/cmake/-/issues/20283
       - run: ctest ${{ runner.os == 'Windows' && '-C Debug' || '' }} 
 
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os.name }}
+          path: ${{ matrix.os.artifact-path }}
