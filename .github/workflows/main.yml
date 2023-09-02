@@ -41,3 +41,23 @@ jobs:
         with:
           name: ${{ matrix.os.name }}
           path: ${{ matrix.os.artifact-path }}
+
+  clean-machine-test:
+    needs: native-build
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.os }}
+      - run: ls -lah *
+      - run: chmod a+x ./cpu-info && ./cpu-info
+        if: runner.os != 'Windows'
+      - run: chmod a+x */cpu-info && */cpu-info
+        if: runner.os == 'Windows'
