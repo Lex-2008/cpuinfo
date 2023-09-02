@@ -19,12 +19,12 @@ jobs:
         # detected host triplet (x64-windows). Unttil then, add
         # '--triplet x64-windows' to keep the desired behavior.
       - run: vcpkg install cpuid ${{ startsWith(matrix.os, 'windows') && '--triplet x64-windows' || '' }}
-      - run: pwd
-      - run: ls -lah
+
       - run: cmake . --toolchain "$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
-      - run: ls -lah
+
       - run: cmake --build .
-      - run: ls -lah
+
         # NOTE: on Windows, you must specify which configuration to test
+        # https://gitlab.kitware.com/cmake/cmake/-/issues/20283
       - run: ctest ${{ startsWith(matrix.os, 'windows') && '-C Debug' || '' }} 
 
