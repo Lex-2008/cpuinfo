@@ -1,0 +1,7 @@
+name: CI
+on: [push]
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/main.yml
+    with:
+      build-type: Debug

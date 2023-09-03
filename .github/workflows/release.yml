@@ -1,0 +1,8 @@
+name: Release
+on: workflow_dispatch
+
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/main.yml
+    with:
+      build-type: Release

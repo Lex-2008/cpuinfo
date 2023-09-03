@@ -1,5 +1,10 @@
 name: Native build
-on: [push]
+on:
+  workflow_call:
+    inputs:
+      build-type:
+        required: true
+        type: string
 jobs:
   native-build:
     strategy:
@@ -10,10 +15,8 @@ jobs:
             artifact-path: cpu-info
           - name: windows-latest
             artifact-path: |
-                Release/*.exe
-                Release/*.dll
-                Debug/*.exe
-                Debug/*.dll
+                ${{ inputs.build-type }}/*.exe
+                ${{ inputs.build-type }}/*.dll
           - name: macos-latest
             artifact-path: cpu-info
     runs-on: ${{ matrix.os.name }}
@@ -30,13 +33,15 @@ jobs:
           key: vcpkg-deps-${{ hashFiles('vcpkg.json') }}
           path: ${{ runner.os == 'Windows' && 'C:\Users\runneradmin\AppData\Local\vcpkg\archives' || '~/.cache/vcpkg/archives' }}
 
-      - run: cmake . --toolchain "$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
-
-      - run: cmake --build .
+        # NOTE: We specify desired build type (debug/release) during build-time on Windows,
+        # and during generate-time on other platforms
+      - run: cmake . --toolchain "$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DCMAKE_BUILD_TYPE=${{ inputs.build-type }}
+      - run: cmake --build . --config ${{ inputs.build-type }}
 
         # NOTE: on Windows, you must specify which configuration to test
         # https://gitlab.kitware.com/cmake/cmake/-/issues/20283
-      - run: ctest ${{ runner.os == 'Windows' && '-C Debug' || '' }} 
+        # On other platforms, it's optional
+      - run: ctest -C ${{ inputs.build-type }}
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
@@ -58,8 +63,5 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ matrix.os }}
-      - run: ls -lah *
+      - run: ls -lah
       - run: chmod a+x ./cpu-info && ./cpu-info
-        if: runner.os != 'Windows'
-      - run: chmod a+x */cpu-info && */cpu-info
-        if: runner.os == 'Windows'
